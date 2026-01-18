@@ -2,57 +2,124 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Üçler Ortaokulu İtiraf</title>
+
 <style>
+*{
+    box-sizing:border-box;
+}
+
 body{
     margin:0;
-    font-family:Arial;
-    background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
     color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:15px;
 }
+
+/* ANA KUTU */
 .box{
+    width:100%;
     max-width:600px;
-    margin:40px auto;
     background:#111827;
     padding:20px;
-    border-radius:12px;
+    border-radius:14px;
+    margin-top:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
-h1{text-align:center}
-input,textarea,button{
+
+h1{
+    text-align:center;
+    font-size:22px;
+    margin-bottom:15px;
+}
+
+/* INPUTLAR */
+input, textarea{
     width:100%;
-    margin-top:10px;
-    padding:10px;
-    border-radius:8px;
+    padding:12px;
+    border-radius:10px;
     border:none;
-    font-size:15px;
+    font-size:16px;
+    margin-top:10px;
 }
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+/* BUTON */
 button{
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    font-size:17px;
+    border:none;
+    border-radius:12px;
     background:#22c55e;
-    color:black;
     font-weight:bold;
     cursor:pointer;
 }
-button:hover{background:#16a34a}
-.post{
-    background:#020617;
-    padding:15px;
-    border-radius:10px;
-    margin-top:15px;
+
+button:hover{
+    background:#16a34a;
 }
+
+/* CAPTCHA */
+.captcha{
+    font-size:30px;
+    letter-spacing:6px;
+    background:#000;
+    padding:14px;
+    border-radius:10px;
+    text-align:center;
+    margin-top:10px;
+    user-select:none;
+}
+
+/* KURALLAR */
 .rule{
     background:#020617;
-    padding:10px;
-    border-radius:8px;
+    padding:12px;
+    border-radius:10px;
     margin-top:8px;
+    font-size:14px;
 }
-.hidden{display:none}
-.captcha{
-    font-size:28px;
-    letter-spacing:5px;
-    background:#000;
-    padding:10px;
-    text-align:center;
-    border-radius:8px;
+
+/* GÖNDERİ */
+.post{
+    background:#020617;
+    padding:14px;
+    border-radius:12px;
+    margin-top:15px;
+    font-size:15px;
+    line-height:1.4;
+}
+
+.hidden{
+    display:none;
+}
+
+/* 💻 BİLGİSAYAR İÇİN EKSTRA */
+@media (min-width: 768px){
+    body{
+        align-items:center;
+    }
+    .box{
+        padding:30px;
+    }
+    h1{
+        font-size:26px;
+    }
+    textarea{
+        min-height:150px;
+    }
 }
 </style>
 </head>
@@ -63,16 +130,16 @@ button:hover{background:#16a34a}
     <h1>Güvenlik Doğrulama</h1>
     <p>Aşağıdaki kodu aynen yaz:</p>
     <div class="captcha" id="captchaText"></div>
-    <input id="captchaInput" placeholder="Kodu buraya yaz len">
+    <input id="captchaInput" placeholder="Kodu buraya yaz">
     <button onclick="checkCaptcha()">Devam Et</button>
 </div>
 
 <!-- KURALLAR -->
 <div class="box hidden" id="rulesBox">
     <h1>Kurallar</h1>
-    <div class="rule">• Küfür, hakaret yasak değil ama az kullanın</div>
+    <div class="rule">• Küfür ve hakaret yasak</div>
+    <div class="rule">• İsim, sınıf, numara yazmak yasak</div>
     <div class="rule">• Öğretmenleri hedef almak yasak</div>
-    <div class="rule">• İsim, numara yazmak yasak</div>
     <div class="rule">• Sorumluluk yazana aittir</div>
     <button onclick="acceptRules()">Kabul Ediyorum</button>
 </div>
@@ -87,26 +154,26 @@ button:hover{background:#16a34a}
 
 <script>
 function generateCaptcha(){
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let code = "";
+    const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code="";
     for(let i=0;i<6;i++){
-        code += chars.charAt(Math.floor(Math.random()*chars.length));
+        code+=chars[Math.floor(Math.random()*chars.length)];
     }
     return code;
 }
 
-let captcha = generateCaptcha();
-document.getElementById("captchaText").innerText = captcha;
+let captcha=generateCaptcha();
+document.getElementById("captchaText").innerText=captcha;
 
-let posts = JSON.parse(localStorage.getItem("posts")) || [];
+let posts=JSON.parse(localStorage.getItem("posts"))||[];
 
 function checkCaptcha(){
-    let val = document.getElementById("captchaInput").value;
-    if(val !== captcha){
-        alert("Yanlış yazdın, bune len");
-        captcha = generateCaptcha();
-        document.getElementById("captchaText").innerText = captcha;
-        document.getElementById("captchaInput").value = "";
+    let val=document.getElementById("captchaInput").value;
+    if(val!==captcha){
+        alert("Yanlış kod, bune len");
+        captcha=generateCaptcha();
+        document.getElementById("captchaText").innerText=captcha;
+        document.getElementById("captchaInput").value="";
         return;
     }
     document.getElementById("captchaBox").classList.add("hidden");
@@ -120,9 +187,9 @@ function acceptRules(){
 }
 
 function sendConfession(){
-    let text = document.getElementById("confessionText").value;
+    let text=document.getElementById("confessionText").value;
     if(text.trim()===""){
-        alert("Boş itiraf mı olur len");
+        alert("Boş itiraf olmaz len");
         return;
     }
     posts.unshift(text);
@@ -144,4 +211,4 @@ function render(){
 </script>
 
 </body>
-  </html>
+</html>

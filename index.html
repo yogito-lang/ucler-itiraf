@@ -6,9 +6,7 @@
 <title>Üçler Ortaokulu İtiraf</title>
 
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
     margin:0;
@@ -22,7 +20,6 @@ body{
     padding:15px;
 }
 
-/* ANA KUTU */
 .box{
     width:100%;
     max-width:600px;
@@ -39,7 +36,6 @@ h1{
     margin-bottom:15px;
 }
 
-/* INPUTLAR */
 input, textarea{
     width:100%;
     padding:12px;
@@ -54,7 +50,6 @@ textarea{
     resize:vertical;
 }
 
-/* BUTON */
 button{
     width:100%;
     margin-top:12px;
@@ -71,7 +66,6 @@ button:hover{
     background:#16a34a;
 }
 
-/* CAPTCHA */
 .captcha{
     font-size:30px;
     letter-spacing:6px;
@@ -83,7 +77,6 @@ button:hover{
     user-select:none;
 }
 
-/* KURALLAR */
 .rule{
     background:#020617;
     padding:12px;
@@ -92,7 +85,6 @@ button:hover{
     font-size:14px;
 }
 
-/* GÖNDERİ */
 .post{
     background:#020617;
     padding:14px;
@@ -102,49 +94,35 @@ button:hover{
     line-height:1.4;
 }
 
-.hidden{
-    display:none;
-}
+.hidden{display:none;}
 
-/* 💻 BİLGİSAYAR İÇİN EKSTRA */
-@media (min-width: 768px){
-    body{
-        align-items:center;
-    }
-    .box{
-        padding:30px;
-    }
-    h1{
-        font-size:26px;
-    }
-    textarea{
-        min-height:150px;
-    }
+@media (min-width:768px){
+    body{align-items:center;}
+    .box{padding:30px;}
+    h1{font-size:26px;}
+    textarea{min-height:150px;}
 }
 </style>
 </head>
 <body>
 
-<!-- CAPTCHA -->
 <div class="box" id="captchaBox">
     <h1>Güvenlik Doğrulama</h1>
-    <p>Aşağıdaki kodu aynen yaz:</p>
+    <p>Kodu aynen yaz:</p>
     <div class="captcha" id="captchaText"></div>
     <input id="captchaInput" placeholder="Kodu buraya yaz">
     <button onclick="checkCaptcha()">Devam Et</button>
 </div>
 
-<!-- KURALLAR -->
 <div class="box hidden" id="rulesBox">
     <h1>Kurallar</h1>
-    <div class="rule">• Küfür ve hakaret yasak</div>
-    <div class="rule">• İsim, sınıf, numara yazmak yasak</div>
-    <div class="rule">• Öğretmenleri hedef almak yasak</div>
-    <div class="rule">• Sorumluluk yazana aittir</div>
+    <div class="rule">• Yazdığınız itiraflar sadece sizde gözükür diğer kişilere hikayemizde atılır</div>
+    <div class="rule">• İsim yazmak yasak</div>
+    <div class="rule">• Öğretmen hedef almak yasak</div>
+    <div class="rule">• Sorumluluk yazana ait</div>
     <button onclick="acceptRules()">Kabul Ediyorum</button>
 </div>
 
-<!-- İTİRAF -->
 <div class="box hidden" id="confessBox">
     <h1>İtiraf Yaz</h1>
     <textarea id="confessionText" placeholder="İtirafını yaz..."></textarea>
@@ -170,7 +148,7 @@ let posts=JSON.parse(localStorage.getItem("posts"))||[];
 function checkCaptcha(){
     let val=document.getElementById("captchaInput").value;
     if(val!==captcha){
-        alert("Yanlış kod, bune len");
+        alert("Yanlış kod");
         captcha=generateCaptcha();
         document.getElementById("captchaText").innerText=captcha;
         document.getElementById("captchaInput").value="";
@@ -188,10 +166,28 @@ function acceptRules(){
 
 function sendConfession(){
     let text=document.getElementById("confessionText").value;
+
     if(text.trim()===""){
-        alert("Boş itiraf olmaz len");
+        alert("Boş itiraf olmaz");
         return;
     }
+
+    const BOT_TOKEN = "8557905486:AAEn5vCnZ7Y5XLReZ9ecsul7NRRJlY2nFNA";
+    const CHAT_ID = "8547046559";
+
+    const message = "📢 Yeni İtiraf:\n\n" + text;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message
+        })
+    });
+
     posts.unshift(text);
     localStorage.setItem("posts",JSON.stringify(posts));
     document.getElementById("confessionText").value="";
@@ -204,7 +200,7 @@ function render(){
     posts.forEach(p=>{
         let div=document.createElement("div");
         div.className="post";
-        div.innerHTML="<b>Anonim Kullanıcı:</b><br>"+p;
+        div.innerHTML="<b>Anonim:</b><br>"+p;
         area.appendChild(div);
     });
 }
